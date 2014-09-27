@@ -71,4 +71,12 @@ object Store {
 
   }
 
+  def completeMapInput(jobId: Long, id: Long, kvs: Iterable[(String, String)]) = DB.withTransaction { implicit session =>
+  	
+  }
+
+  def completeIntermediate(jobId: Long, id: Long, kvs: Iterable[(String, String)]) = DB.withTransaction { implicit session =>
+
+  }
+
 }
