@@ -19,7 +19,7 @@ object Store {
   def createJob(data: String) = {
     val job = Schema.Job(Random.nextLong(), data, 0)
     val mapInputs = io.Source.fromString(data).getLines.zipWithIndex.map {
-      case (v, k) => Schema.MapInput(Random.nextLong(), k.toString, v, job.id, false)
+      case (v, k) => Schema.Input(Random.nextLong(), k.toString, v, job.id, false)
     }.toIterable
     DB.withTransaction { implicit session =>
       Table.Job.q += job
@@ -27,7 +27,7 @@ object Store {
     }
   }
 
-  def moreTasks(max: Int) = DB.withTransaction { implicit session =>
+  def moreTasks(max: Int): List[Schema.Input] = DB.withTransaction { implicit session =>
     val jobOpt = Table.Job.q.filter(_.state =!= 2).firstOption()
     jobOpt.toList.flatMap { job =>
       job.state match {
@@ -46,5 +46,7 @@ object Store {
       }
     }
   }
+  
+  
 
 }
