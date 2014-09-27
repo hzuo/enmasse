@@ -1,6 +1,7 @@
 package enmasse
 
 import scala.slick.driver.PostgresDriver.simple._
+import scala.slick.jdbc._
 
 trait PostgresTable {
 
@@ -8,5 +9,6 @@ trait PostgresTable {
   type Tbl <: Table[Row]
 
   def q: TableQuery[Tbl]
+  def read: GetResult[Row]
 
 }

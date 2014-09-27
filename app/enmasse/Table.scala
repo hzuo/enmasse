@@ -3,6 +3,7 @@ package enmasse
 import java.sql.Date
 
 import scala.slick.driver.PostgresDriver.simple._
+import scala.slick.jdbc._
 
 object Table {
 
@@ -15,6 +16,9 @@ object Table {
       def * = (id, data, state) <> (Schema.Job.tupled, Schema.Job.unapply)
     }
     override val q = TableQuery[Tbl]
+    override val read = GetResult { r =>
+      Schema.Job(r.<<, r.<<, r.<<)
+    }
   }
 
   object MapInput extends PostgresTable {
@@ -28,6 +32,9 @@ object Table {
       def * = (id, k, v, jobId, done) <> (Schema.Input.tupled, Schema.Input.unapply)
     }
     override val q = TableQuery[Tbl]
+    override val read = GetResult { r =>
+      Schema.Input(r.<<, r.<<, r.<<, r.<<, r.<<)
+    }
   }
 
   object Intermediate extends PostgresTable {
@@ -41,6 +48,9 @@ object Table {
       def * = (id, k, v, jobId, done) <> (Schema.Input.tupled, Schema.Input.unapply)
     }
     override val q = TableQuery[Tbl]
+    override val read = GetResult { r =>
+      Schema.Input(r.<<, r.<<, r.<<, r.<<, r.<<)
+    }
   }
 
   object ReduceOuput extends PostgresTable {
@@ -53,6 +63,9 @@ object Table {
       def * = (id, k, v, jobId) <> (Schema.Output.tupled, Schema.Output.unapply)
     }
     override val q = TableQuery[Tbl]
+    override val read = GetResult { r =>
+      Schema.Output(r.<<, r.<<, r.<<, r.<<)
+    }
   }
 
 }

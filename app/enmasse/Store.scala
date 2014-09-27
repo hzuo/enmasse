@@ -29,8 +29,10 @@ object Store {
 
   def moreTasks(max: Int): List[Schema.Input] = DB.withTransaction { implicit session =>
 
+    def random = SimpleFunction[Long]("random").apply(Seq.empty)
+
     def fromMapInputs(job: Schema.Job) = {
-      val mapInputs = Table.MapInput.q.filter(x => x.id === job.id && !x.done).take(max).list()
+      val mapInputs = Table.MapInput.q.filter(x => x.id === job.id && !x.done).sortBy(_ => random).take(max).list()
       if (mapInputs.isEmpty) {
         Table.Job.q.filter(_.id === job.id).map(_.state).update(1)
         fromIntermediates(job)
@@ -40,7 +42,7 @@ object Store {
     }
 
     def fromIntermediates(job: Schema.Job) = {
-      val intermediates = Table.Intermediate.q.filter(x => x.id === job.id && !x.done).take(max).list()
+      val intermediates = Table.Intermediate.q.filter(x => x.id === job.id && !x.done).sortBy(_ => random).take(max).list()
       if (intermediates.isEmpty) {
         Table.Job.q.filter(_.id === job.id).map(_.state).update(2)
       }
@@ -49,7 +51,7 @@ object Store {
 
     var ret: Option[List[Schema.Input]] = Some(Nil)
     while (ret.isDefined && ret.get.isEmpty) {
-      val jobOpt = Table.Job.q.filter(_.state =!= 2).firstOption()
+      val jobOpt = Table.Job.q.filter(_.state =!= 2).sortBy(_ => random).firstOption()
       jobOpt match {
         case None =>
           ret = None
