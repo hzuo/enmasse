@@ -23,7 +23,8 @@ object Table {
       def k = column[String]("k")
       def v = column[String]("v")
       def jobId = column[Long]("job_id")
-      def * = (id, k, v, jobId) <> (Schema.MapInput.tupled, Schema.MapInput.unapply)
+      def done = column[Boolean]("done")
+      def * = (id, k, v, jobId, done) <> (Schema.MapInput.tupled, Schema.MapInput.unapply)
     }
     override val q = TableQuery[Tbl]
   }
@@ -34,20 +35,21 @@ object Table {
       def id = column[Long]("id")
       def k = column[String]("k")
       def v = column[String]("v")
-      def mapInputId = column[Long]("map_input_id")
-      def * = (id, k, v, mapInputId) <> (Schema.Intermediate.tupled, Schema.Intermediate.unapply)
+      def jobId = column[Long]("job_id")
+      def done = column[Boolean]("done")
+      def * = (id, k, v, jobId, done) <> (Schema.Intermediate.tupled, Schema.Intermediate.unapply)
     }
     override val q = TableQuery[Tbl]
   }
 
   object ReduceOuput extends PostgresTable {
     type Row = Schema.ReduceOutput
-    class Tbl(tag: Tag) extends Table[Row](tag, "intermediate") {
+    class Tbl(tag: Tag) extends Table[Row](tag, "reduce_output") {
       def id = column[Long]("id")
       def k = column[String]("k")
       def v = column[String]("v")
-      def intermediateId = column[Long]("intermediate_id")
-      def * = (id, k, v, intermediateId) <> (Schema.ReduceOutput.tupled, Schema.ReduceOutput.unapply)
+      def jobId = column[Long]("job_id")
+      def * = (id, k, v, jobId) <> (Schema.ReduceOutput.tupled, Schema.ReduceOutput.unapply)
     }
     override val q = TableQuery[Tbl]
   }
