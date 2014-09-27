@@ -1,28 +1,17 @@
 
+urlBase = "//10.144.27.103:9000"
 function loadTask(){
 	var req = new XMLHttpRequest();
-	var url = '//10.144.27.103:9000/worker.js';
-    req.open('GET', url, false);
+	req.open('GET', self.urlBase + '/worker.js', false);
     req.setRequestHeader('X-PINGOTHER', 'pingpong');
     req.setRequestHeader('Content-Type', 'application/javascript');
     req.send(); 
     return req.results;
 }
 
-// 	var task = {
-// 		uid: "",
-// 		code: "",
-// 		type: "",
-// 		data: [{key:0,value:5}]
-// 	};
-
-// 	return task;
-// }
-
 function reportResults(result){
 	var req = new XMLHttpRequest();
-	var url = '//10.144.27.103:9000/worker.js';
-    req.open('post', url, false);
+    req.open('POST', self.urlBase + '/worker.js', false);
     req.setRequestHeader('X-PINGOTHER', 'pingpong');
     req.setRequestHeader('Content-Type', 'application/json');
     req.send(results); 
@@ -35,7 +24,7 @@ function executeTask(task){
 			attractorToken: self.token,
 			type: task.type,
 			output: []
-		}
+		},
 		collect: function(key, value){
 			this.results.output.push({
 				k: key,
