@@ -35,7 +35,7 @@ function executeTask(task){
 			attractorToken: self.token,
 			type: task.type,
 			output: []
-		}
+		},
 		collect: function(key, value){
 			this.results.output.push({
 				k: key,
