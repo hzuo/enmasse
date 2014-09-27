@@ -1,0 +1,9 @@
+/.tscache/
+/bower_components/
+/node_modules/
+/typings/
+.baseDir.ts
+
+/build/
+
+tscommand-*.tmp.txt

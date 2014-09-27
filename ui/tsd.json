@@ -1,0 +1,36 @@
+{
+  "version": "v4",
+  "repo": "borisyankov/DefinitelyTyped",
+  "ref": "master",
+  "path": "typings",
+  "bundle": "typings/tsd.d.ts",
+  "installed": {
+    "d3/d3.d.ts": {
+      "commit": "7ccc55d5f026751df3ea87fe5a9ec8bf09a60905"
+    },
+    "backbone/backbone.d.ts": {
+      "commit": "7ccc55d5f026751df3ea87fe5a9ec8bf09a60905"
+    },
+    "jquery/jquery.d.ts": {
+      "commit": "7ccc55d5f026751df3ea87fe5a9ec8bf09a60905"
+    },
+    "underscore/underscore.d.ts": {
+      "commit": "7ccc55d5f026751df3ea87fe5a9ec8bf09a60905"
+    },
+    "dcjs/dc.d.ts": {
+      "commit": "7ccc55d5f026751df3ea87fe5a9ec8bf09a60905"
+    },
+    "crossfilter/crossfilter.d.ts": {
+      "commit": "7ccc55d5f026751df3ea87fe5a9ec8bf09a60905"
+    },
+    "moment/moment.d.ts": {
+      "commit": "7ccc55d5f026751df3ea87fe5a9ec8bf09a60905"
+    },
+    "spin/spin.d.ts": {
+      "commit": "7ccc55d5f026751df3ea87fe5a9ec8bf09a60905"
+    },
+    "jquery.dataTables/jquery.dataTables.d.ts": {
+      "commit": "7ccc55d5f026751df3ea87fe5a9ec8bf09a60905"
+    }
+  }
+}

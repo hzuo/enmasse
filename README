@@ -1,0 +1,22 @@
+for our custom asset pipeline:
+
+you need the following tools:
+node (this means that you should also have npm)
+bower (npm install -g bower)
+tsd (npm install -g tsd)
+grunt-cli (npm install -g grunt-cli)
+
+---
+
+in the ui directory, run the following commands:
+npm install
+bower install
+tsd reinstall -so
+grunt prod
+
+alternatively:
+./prod.sh
+
+---
+
+have a good day! :)
