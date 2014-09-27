@@ -28,25 +28,46 @@ object Store {
   }
 
   def moreTasks(max: Int): List[Schema.Input] = DB.withTransaction { implicit session =>
-    val jobOpt = Table.Job.q.filter(_.state =!= 2).firstOption()
-    jobOpt.toList.flatMap { job =>
-      job.state match {
-        case 0 =>
-          val pending = Table.MapInput.q.filter(!_.done).take(max).list()
-          if (pending.isEmpty)
-            throw new AssertionError
-          pending
-        case 1 =>
-          val pending = Table.Intermediate.q.filter(!_.done).take(max).list()
-          if (pending.isEmpty)
-            throw new AssertionError
-          pending
-        case _ =>
-          throw new AssertionError
+
+    def fromMapInputs(job: Schema.Job) = {
+      val mapInputs = Table.MapInput.q.filter(!_.done).take(max).list()
+      if (mapInputs.isEmpty) {
+        Table.Job.q.filter(_.id === job.id).map(_.state).update(1)
+        fromIntermediates(job)
+      } else {
+        mapInputs
       }
     }
+
+    def fromIntermediates(job: Schema.Job) = {
+      val intermediates = Table.Intermediate.q.filter(!_.done).take(max).list()
+      if (intermediates.isEmpty) {
+        Table.Job.q.filter(_.id === job.id).map(_.state).update(2)
+      }
+      intermediates
+    }
+
+    var ret: Option[List[Schema.Input]] = Some(Nil)
+    while (ret.isDefined && ret.get.isEmpty) {
+      val jobOpt = Table.Job.q.filter(_.state =!= 2).firstOption()
+      jobOpt match {
+        case None =>
+          ret = None
+        case Some(job) =>
+          job.state match {
+            case 0 =>
+              ret = Some(fromMapInputs(job))
+            case 1 =>
+              ret = Some(fromIntermediates(job))
+            case _ =>
+              // state can only be 0, 1, or 2
+              throw new AssertionError
+          }
+      }
+    }
+
+    ret.toList.flatten
+
   }
-  
-  
 
 }
