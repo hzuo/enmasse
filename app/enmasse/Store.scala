@@ -17,13 +17,33 @@ object Store {
   }
 
   def createJob(data: String) = {
-    val jobId = Random.nextLong()
+    val job = Schema.Job(Random.nextLong(), data, 0)
     val mapInputs = io.Source.fromString(data).getLines.zipWithIndex.map {
-      case (v, k) => Schema.MapInput(Random.nextLong(), k.toString, v, jobId, false)
+      case (v, k) => Schema.MapInput(Random.nextLong(), k.toString, v, job.id, false)
     }.toIterable
     DB.withTransaction { implicit session =>
-      Table.Job.q += Schema.Job(jobId, data)
+      Table.Job.q += job
       Table.MapInput.q ++= mapInputs
+    }
+  }
+
+  def moreTasks(max: Int) = DB.withTransaction { implicit session =>
+    val jobOpt = Table.Job.q.filter(_.state =!= 2).firstOption()
+    jobOpt.toList.flatMap { job =>
+      job.state match {
+        case 0 =>
+          val pending = Table.MapInput.q.filter(!_.done).take(max).list()
+          if (pending.isEmpty)
+            throw new AssertionError
+          pending
+        case 1 =>
+          val pending = Table.Intermediate.q.filter(!_.done).take(max).list()
+          if (pending.isEmpty)
+            throw new AssertionError
+          pending
+        case _ =>
+          throw new AssertionError
+      }
     }
   }
 

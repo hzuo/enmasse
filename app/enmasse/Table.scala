@@ -11,7 +11,8 @@ object Table {
     class Tbl(tag: Tag) extends Table[Row](tag, "job") {
       def id = column[Long]("id")
       def data = column[String]("data")
-      def * = (id, data) <> (Schema.Job.tupled, Schema.Job.unapply)
+      def state = column[Int]("state")
+      def * = (id, data, state) <> (Schema.Job.tupled, Schema.Job.unapply)
     }
     override val q = TableQuery[Tbl]
   }
