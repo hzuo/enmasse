@@ -22,3 +22,4 @@ bin/
 
 *.sublime*
 push.sh
+.DS_Store
