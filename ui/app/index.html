@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <title></title>
     <script type="text/javascript">
-        var myWorker = new Worker("worker.js");
-        
-		myWorker.onmessage = function (oEvent) {
-		  console.log("Worker said : " + oEvent.data);
-		};
-
-		myWorker.postMessage("ali");
+    	var req=new XMLHttpRequest();
+    	req.open("GET", "URL", true);
+		req.onreadystatechange=function(){
+  			if (req.readyState==4 && req.status==200){
+				var myWorker = new Worker(
+					window.URL.createObjectURL(
+						new Blob([req.response.code], 
+								 {type: "text/javascript"}
+								 )
+						)
+					);
+				myWorker.postMessage("attractor_token");
+      		}
+  		}
+    	req.send();
     </script>
 </head>
 <body>
