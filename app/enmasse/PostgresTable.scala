@@ -9,6 +9,5 @@ trait PostgresTable {
   type Tbl <: Table[Row]
 
   def q: TableQuery[Tbl]
-  def read: GetResult[Row]
 
 }
