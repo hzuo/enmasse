@@ -3,17 +3,54 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+    <script type="text/javascript" src="scripts/enmasse-ui.js"></script>
     <script type="text/javascript">
         var myWorker = new Worker("worker.js");
-        
+
 		myWorker.onmessage = function (oEvent) {
 		  console.log("Worker said : " + oEvent.data);
 		};
 
 		myWorker.postMessage("ali");
     </script>
+    <link href='http://fonts.googleapis.com/css?family=Oswald:400,300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+    <link rel="stylesheet" href="styles/enmasse-ui.css">
 </head>
 <body>
-
+	<div id="sidebar">
+		<div id="sidebar-header">
+			jobs
+		</div>
+		<div class="sidebar-cell job">
+			<div class="job-id">#4930</div>
+			<div class="job-title">word count</div>
+		</div>
+		<div class="sidebar-cell job">
+			<div class="job-id">#4931</div>
+			<div class="job-title">weather job</div>
+		</div>
+		<div class="sidebar-cell job">
+			<div class="job-id">#102</div>
+			<div class="job-title">rosie stuff</div>
+		</div>
+		<div class="sidebar-cell">
+			<div class="job-add"> + </div>
+		</div>
+	</div>
+	<div id="content">
+		<div class="content-box">
+			<div class="content-header">status</div>
+			<div class="content-body">
+				stuff here
+			</div>
+		</div>
+		<div class="content-box">
+			<div class="content-header">results</div>
+			<div class="content-body">
+				stuff here
+			</div>
+		</div>
+	</div>
 </body>
 </html>
