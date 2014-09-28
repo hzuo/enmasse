@@ -34,7 +34,7 @@ object Store {
   // undone send falses will be done later
 
   def moreTasks(max: Int): Option[Either[MapTasks, ReduceTasks]] = {
-    val ((jobId, mode, fn), ret) = DB.withTransaction { implicit session =>
+    val (meta, ret) = DB.withTransaction { implicit session =>
 
       def random = SimpleFunction[Long]("random").apply(Seq.empty)
 
@@ -90,6 +90,7 @@ object Store {
       (meta, ret)
     }
     ret.map { tasks =>
+      val (jobId, mode, fn) = meta
       mode match {
         case Map =>
           val mapTasks = tasks.map(_.asInstanceOf[MapTask])

@@ -53,7 +53,6 @@ function executeTask(taskSet) {
 function main() {
     while (true) {
         var option = loadTask();
-        console.log(option);
         if (option.length == 0) {
             setTimeout(self.main, 10000);
             break;
