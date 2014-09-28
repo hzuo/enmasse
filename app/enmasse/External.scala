@@ -13,4 +13,18 @@ object External {
   implicit val addJobFmt = Json.format[AddJob]
   implicit val jobFmt = Json.format[Job]
 
+  case class Task(id: Long, k: String, v: String)
+  case class TaskSet(mode: Boolean, fn: String, tasks: Seq[Task])
+
+  implicit val taskFmt = Json.format[Task]
+  implicit val taskSetFmt = Json.format[TaskSet]
+
+  case class Emit(k: String, v: String)
+  case class TaskGrpResult(id: Long, emits: Seq[Emit])
+  case class TaskSetResult(attractorId: Long, mode: Boolean, output: Seq[TaskGrpResult])
+
+  implicit val emitFmt = Json.format[Emit]
+  implicit val taskGroupResultFmt = Json.format[TaskGrpResult]
+  implicit val taskSetResultFmt = Json.format[TaskSetResult]
+
 }

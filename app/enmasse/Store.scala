@@ -33,7 +33,7 @@ object Store {
   // prioritize send true
   // undone send falses will be done later
 
-  def moreTasks(max: Int): (Mode, List[Schema.Input]) = DB.withTransaction { implicit session =>
+  def moreTasks(max: Int): ((Mode, String), List[Schema.Input]) = DB.withTransaction { implicit session =>
 
     def random = SimpleFunction[Long]("random").apply(Seq.empty)
 
@@ -56,7 +56,7 @@ object Store {
     }
 
     var ret: Option[List[Schema.Input]] = Some(Nil)
-    var mode: Mode = null
+    var modeAndFn: (Mode, String) = null
     while (ret.isDefined && ret.get.isEmpty) {
       val jobOpt = Table.Job.q.filter(_.state =!= 2).sortBy(_ => random).firstOption()
       jobOpt match {
@@ -66,19 +66,19 @@ object Store {
           job.state match {
             case 0 =>
               val (mode0, ret0) = fromMapInputs(job)
-              mode = mode0
+              modeAndFn = mode0 match {
+                case Map => (Map, job.map)
+                case Reduce => (Reduce, job.reduce)
+              }
               ret = Some(ret0)
             case 1 =>
-              mode = Reduce
+              modeAndFn = (Reduce, job.reduce)
               ret = Some(fromIntermediates(job))
-            case _ =>
-              // state can only be 0, 1, or 2
-              throw new AssertionError
           }
       }
     }
-    assert(mode != null)
-    (mode, ret.toList.flatten)
+    assert(modeAndFn != null)
+    (modeAndFn, ret.toList.flatten)
 
   }
 
@@ -123,5 +123,3 @@ object Store {
   }
 
 }
-
-

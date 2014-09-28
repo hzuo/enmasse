@@ -50,7 +50,40 @@ object Application extends Controller {
   }
 
   def moreTasks = Action {
-    Ok
+    val ((mode, fn), tasks) = Store.moreTasks(1000)
+    val modeFlag = mode match {
+      case Map => true
+      case Reduce => false
+    }
+    val externalizedTasks = tasks.map {
+      case Schema.Input(id, k, v, jobId, done) =>
+        External.Task(id, k, v)
+    }
+    val taskSet = External.TaskSet(modeFlag, fn, externalizedTasks)
+    Ok(Json.toJson(taskSet))
+  }
+
+  def completeTasks = Action(parse.tolerantJson) { request =>
+    request.body.validate[External.TaskSetResult] match {
+      case s: JsSuccess[External.TaskSetResult] =>
+        val spec = s.value
+        if (spec.mode) {
+          for (External.TaskGrpResult(id, emits) <- spec.output) {
+            val kvs = for (External.Emit(k, v) <- emits) yield (k, v)
+            Store.completeMapInput(id, kvs)
+          }
+        } else {
+          for (External.TaskGrpResult(id, emits) <- spec.output) {
+            val kvs = for (External.Emit(k, v) <- emits) yield (k, v)
+            Store.completeIntermediate(id, kvs)
+          }
+        }
+        Ok
+      case e: JsError =>
+        val js = JsError.toFlatJson(e)
+        Logger.error(Json.stringify(js))
+        BadRequest(js)
+    }
   }
 
 }
