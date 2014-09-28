@@ -58,7 +58,7 @@ object Application extends Controller {
 
   def moreTasks = Action {
     import External._
-    val jsonOpt = Store.moreTasks(1000).map(_ match {
+    val jsonOpt = Store.moreTasks(100).map(_ match {
       case Left(mapTasks) => Json.toJson(mapTasks)
       case Right(reduceTasks) => Json.toJson(reduceTasks)
     })
