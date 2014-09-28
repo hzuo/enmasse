@@ -2,13 +2,15 @@ CreateTile =  Backbone.View.extend({
 	className: 'sidebar-cell',
 	
 	events: {
-
+		"click": "makeJob"
 	},
 
 	initialize: function(){
-		this.collection.bind("add", this.render, this);
-		this.collection.bind("reset", this.render, this);
 		this.render();
+	},
+
+	makeJob: function() {
+		router.navigate("create", {trigger: true});
 	},
 
 	render: function(){
