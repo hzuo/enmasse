@@ -1,6 +1,6 @@
 {
   "name": "wordcount",
   "dataOrigin": "http://bigredhax.s3.amazonaws.com/big.txt",
-  "map": "function map(t,i,n){for(var a=i.split(' '),e=0;e<a.length;e++)n.emit(a[e],'1')}",
+  "map": "function map(t,i,n){for(var a=i.split(/\\s+/),e=0;e<a.length;e++)n.emit(a[e],'1')}",
   "reduce": "function reduce(e,n,r){for(var t=0,a=0;a<n.length;a++)t+=parseInt(n[a]);r.emit(e,''+t)}"
 }

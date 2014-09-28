@@ -36,7 +36,7 @@ function executeTask(taskSet) {
         f(taskSet.tasks[i].k, taskSet.tasks[i].v, outputCollector);
         out.push(
             {
-                preimageKey: taskSet.tasks[i].key,
+                preimageKey: taskSet.tasks[i].k,
                 emits: outputCollector.emits
             }
         );

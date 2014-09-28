@@ -20,7 +20,7 @@ object External {
 
   case class Emit(k: String, v: String)
   case class TaskGrpResult(preimageKey: String, emits: Seq[Emit])
-  case class TaskSetResult(attractorId: Long, jobId: Long, mode: Boolean, output: Seq[TaskGrpResult])
+  case class TaskSetResult(attractorId: String, jobId: Long, mode: Boolean, output: Seq[TaskGrpResult])
 
   implicit val emitFmt = Json.format[Emit]
   implicit val taskGroupResultFmt = Json.format[TaskGrpResult]

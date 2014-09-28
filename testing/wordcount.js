@@ -1,5 +1,5 @@
 function map(k, v, context) {
-  var words = v.split(' ');
+  var words = v.split(/\s+/);
   for (var i = 0; i < words.length; i++) {
     context.emit(words[i], '1');
   }
