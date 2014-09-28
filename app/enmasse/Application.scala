@@ -103,4 +103,8 @@ object Application extends Controller {
     Ok(ret)
   }
 
+  def progress(jobId: String) = Action { request =>
+    Ok(Store.getProgress(jobId.toLong).toString)
+  }
+
 }
