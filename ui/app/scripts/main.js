@@ -1,7 +1,7 @@
 $(document).ready(function(){
 	$(".job").css("background-image", function(){
-		var i = (Math.random() * 100).toFixed(2);
-		var s = "-webkit-linear-gradient(left, transparent " + i + "%,rgba(53,53,53,1) " + i + "%, rgba(53,53,53,1) 100%)";
-		$(this).animate
+		var i = (100 - (Math.random() * 100)).toFixed(2);
+		var s = "-webkit-linear-gradient(right, transparent " + i + "%,rgba(87,173,207,0.7) " + i + "%, rgba(87,173,207,0.7) 100%)";
+		return s;
 	});
 });

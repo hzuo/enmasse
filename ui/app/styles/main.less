@@ -6,9 +6,9 @@
 html, body {
 	margin: 0;
 	padding: 0;
-	min-height: 100%;
+	min-height: 100%;	
 }
-	
+
 #sidebar {
 	position: fixed;
 	top: 0;
@@ -20,7 +20,15 @@ html, body {
 	box-sizing: border-box;
 	padding: 10px 0;
 
-	#sidebar-header {
+	#header {
+		box-sizing: border-box;
+		padding: 30px 10px;
+		font-size: 42px;
+		font-family: "Oswald";
+		letter-spacing: 2px;
+	}
+
+	#sidebar-label {
 		width: 100%;
 		box-sizing: border-box;
 		padding: 5px 10px;
@@ -58,28 +66,17 @@ html, body {
 		cursor: pointer;
 		background: black;
 	}
-
-	.job {
-		background-color: #57ADCF;
-		background-image: linear-gradient(left, transparent 30%,rgba(53,53,53,1) 30%, rgba(53,53,53,1) 100%);
-		background-image: -webkit-linear-gradient(left, transparent 30%,rgba(53,53,53,1) 30%, rgba(53,53,53,1) 100%);
-		background-image: -moz-linear-gradient(left, transparent 30%,rgba(53,53,53,1) 30%, rgba(53,53,53,1) 100%);
-	}
-
-	.sidebar-cell.job:hover {
-		background-color: #6BD5FF;
-	}
 }
 
 #content {
 	position: fixed;
 	top: 0;
 	right: 0;
-	background-color: @whitish;
 	width: 75%;
 	height: 100%;
+	background-color: @whitish;
 	box-sizing: border-box;
-	padding: 15px;
+	padding: 15px 30px;
 
 	.content-box {
 		box-sizing: border-box;
@@ -89,10 +86,32 @@ html, body {
 			font-family: "Oswald", sans-serif;
 			font-size: 36px;
 			letter-spacing: 2px;
+			border-bottom: 1px solid #000;
 		}
 
 		.content-body {
 			font-family: sans-serif;
+			box-sizing: border-box;
+			font-size: 20px;
+			padding: 15px 0;
+
+			ul {
+				margin: 0;
+				padding: 0;
+				list-style-type: none;
+
+				li {
+					margin: 0 0 10px 0;
+				}
+			}
 		}
 	}
+}
+
+.status-complete {
+	color: green;
+}
+
+.status-title {
+	font-weight: bold;
 }

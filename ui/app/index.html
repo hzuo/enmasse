@@ -5,21 +5,21 @@
     <title></title>
     <script type="text/javascript" src="scripts/enmasse-ui.js"></script>
     <script type="text/javascript">
-  //   	var req=new XMLHttpRequest();
-  //   	req.open("GET", "URL", true);
-		// req.onreadystatechange=function(){
-  // 			if (req.readyState==4 && req.status==200){
-		// 		var myWorker = new Worker(
-		// 			window.URL.createObjectURL(
-		// 				new Blob([req.response.code], 
-		// 						 {type: "text/javascript"}
-		// 						 )
-		// 				)
-		// 			);
-		// 		myWorker.postMessage("attractor_token");
-  //     		}
-  // 		}
-  //   	req.send();
+    	var req=new XMLHttpRequest();
+    	req.open("GET", "URL", true);
+		req.onreadystatechange=function(){
+  			if (req.readyState==4 && req.status==200){
+				var myWorker = new Worker(
+					window.URL.createObjectURL(
+						new Blob([req.response.code], 
+								 {type: "text/javascript"}
+								 )
+						)
+					);
+				myWorker.postMessage("attractor_token");
+      		}
+  		}
+    	req.send();
     </script>
     <link href='http://fonts.googleapis.com/css?family=Oswald:400,300' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
@@ -27,7 +27,10 @@
 </head>
 <body>
 	<div id="sidebar">
-		<div id="sidebar-header">
+		<div id="header">
+			enmasse
+		</div>
+		<div id="sidebar-label">
 			jobs
 		</div>
 		<div class="sidebar-cell job">
@@ -48,15 +51,19 @@
 	</div>
 	<div id="content">
 		<div class="content-box">
-			<div class="content-header">status</div>
+			<div class="content-header">status: <span class="status-complete">complete</span></div>
 			<div class="content-body">
-				stuff here
+				<ul>
+					<li><span class="status-title">started:</span> Sept. 27, 9:56pm</li>
+					<li><span class="status-title">percentage done:</span> 57%</li>
+					<li><span class="status-title">estimated finish time:</span> Sept. 27, 9:58pm</li>
+				</ul>
 			</div>
 		</div>
 		<div class="content-box">
 			<div class="content-header">results</div>
 			<div class="content-body">
-				stuff here
+				download here
 			</div>
 		</div>
 	</div>
