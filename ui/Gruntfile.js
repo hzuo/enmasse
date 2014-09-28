@@ -30,7 +30,7 @@ module.exports = function (grunt) {
           {
             expand: true,
             cwd: 'lib',
-            src: 'styles/**',
+            src: '**',
             dest: 'build'
           },
           {
@@ -95,19 +95,6 @@ module.exports = function (grunt) {
       }
     },
     concat: {
-      buildjs: {
-        options: {
-          separator: ';'
-        },
-        files: {
-          'build/scripts/lib.js': 'lib/scripts/**/*.js',
-          'build/scripts/<%= pkg.name %>.js': [
-            'build/scripts/bower.js',
-            'build/scripts/lib.js',
-            'build/scripts/app.js'
-          ]
-        }
-      },
       buildcss: {
         files: {
           'build/styles/<%= pkg.name %>.css': ['build/styles/**/*.css']
@@ -154,7 +141,6 @@ module.exports = function (grunt) {
     'bower_concat:build',
     'ts:build',
     'less:build',
-    'concat:buildjs',
     'concat:buildcss'
   ]);
   grunt.registerTask('min', ['uglify:build', 'cssmin:build']);

@@ -16,13 +16,15 @@ object Store {
     WS.url(url).get().map(_.body)
   }
 
-  def createJob(data: String) = {
-    val job = Schema.Job(Random.nextLong(), data, 0)
-    val mapInputs = io.Source.fromString(data).getLines.zipWithIndex.map {
+  def createJob(name: String, dataOrigin: String, content: String, map: String, reduce: String) = {
+    val job = Schema.Job(Random.nextLong(), name, dataOrigin, map, reduce, System.currentTimeMillis(), 0)
+    val file = Schema.File(job.id, content)
+    val mapInputs = io.Source.fromString(content).getLines.zipWithIndex.map {
       case (v, k) => Schema.Input(Random.nextLong(), k.toString, v, job.id, false)
     }.toIterable
     DB.withTransaction { implicit session =>
       Table.Job.q += job
+      Table.File.q += file
       Table.MapInput.q ++= mapInputs
     }
   }
@@ -31,17 +33,17 @@ object Store {
   // prioritize send true
   // undone send falses will be done later
 
-  def moreTasks(max: Int): List[Schema.Input] = DB.withTransaction { implicit session =>
+  def moreTasks(max: Int): ((Mode, String), List[Schema.Input]) = DB.withTransaction { implicit session =>
 
     def random = SimpleFunction[Long]("random").apply(Seq.empty)
 
-    def fromMapInputs(job: Schema.Job) = {
+    def fromMapInputs(job: Schema.Job): (Mode, List[Schema.Input]) = {
       val mapInputs = Table.MapInput.q.filter(x => x.jobId === job.id && !x.done).sortBy(_ => random).take(max).list()
       if (mapInputs.isEmpty) {
         Table.Job.q.filter(_.id === job.id).map(_.state).update(1)
-        fromIntermediates(job)
+        (Reduce, fromIntermediates(job))
       } else {
-        mapInputs
+        (Map, mapInputs)
       }
     }
 
@@ -54,6 +56,7 @@ object Store {
     }
 
     var ret: Option[List[Schema.Input]] = Some(Nil)
+    var modeAndFn: (Mode, String) = null
     while (ret.isDefined && ret.get.isEmpty) {
       val jobOpt = Table.Job.q.filter(_.state =!= 2).sortBy(_ => random).firstOption()
       jobOpt match {
@@ -62,16 +65,20 @@ object Store {
         case Some(job) =>
           job.state match {
             case 0 =>
-              ret = Some(fromMapInputs(job))
+              val (mode0, ret0) = fromMapInputs(job)
+              modeAndFn = mode0 match {
+                case Map => (Map, job.map)
+                case Reduce => (Reduce, job.reduce)
+              }
+              ret = Some(ret0)
             case 1 =>
+              modeAndFn = (Reduce, job.reduce)
               ret = Some(fromIntermediates(job))
-            case _ =>
-              // state can only be 0, 1, or 2
-              throw new AssertionError
           }
       }
     }
-    ret.toList.flatten
+    assert(modeAndFn != null)
+    (modeAndFn, ret.toList.flatten)
 
   }
 
@@ -109,6 +116,10 @@ object Store {
           }
       }
     }
+  }
+
+  def getJobs(): List[Schema.Job] = DB.withSession { implicit session =>
+    Table.Job.q.list()
   }
 
 }
