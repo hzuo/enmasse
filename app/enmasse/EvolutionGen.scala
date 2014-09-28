@@ -4,7 +4,7 @@ import scala.slick.driver.PostgresDriver.simple._
 
 object EvolutionGen extends App {
 
-  val xs = List[PostgresTable](Table.Job, Table.File, Table.MapInput, Table.Intermediate, Table.ReduceOutput)
+  val xs = List[PostgresTable](Table.Job, Table.File, Table.MapInput, Table.Intermediate, Table.ReduceOutput, Table.JobPulse)
 
   val ups = xs.map(_.q.ddl.createStatements).flatten
 

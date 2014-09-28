@@ -77,7 +77,7 @@ object Table {
 
   object JobPulse extends PostgresTable {
     type Row = Schema.JobPulse
-    class Tbl(tag: Tag) extends Table[Row](tag, "reduce_output") {
+    class Tbl(tag: Tag) extends Table[Row](tag, "job_pulse") {
       def jobId = column[Long]("job_id")
       def totalMapTasks = column[Long]("total_map_tasks")
       def totalReduceTasks = column[Long]("total_reduce_tasks")

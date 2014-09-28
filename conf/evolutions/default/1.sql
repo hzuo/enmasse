@@ -20,8 +20,16 @@ create table "reduce_output" ("k" VARCHAR(254) NOT NULL,"v" VARCHAR(254) NOT NUL
 
 alter table "reduce_output" add constraint "reduce_output_fk_job" foreign key("job_id") references "job"("id") on update NO ACTION on delete NO ACTION;
 
+create table "job_pulse" ("job_id" BIGINT NOT NULL,"total_map_tasks" BIGINT NOT NULL,"total_reduce_tasks" BIGINT NOT NULL);
+
+alter table "job_pulse" add constraint "job_pulse_fk_job" foreign key("job_id") references "job"("id") on update NO ACTION on delete NO ACTION;
+
 
 # --- !Downs
+
+alter table "job_pulse" drop constraint "job_pulse_fk_job";
+
+drop table "job_pulse";
 
 alter table "reduce_output" drop constraint "reduce_output_fk_job";
 
