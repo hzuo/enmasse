@@ -93,10 +93,10 @@ object Store {
       mode match {
         case Map =>
           val mapTasks = tasks.map(_.asInstanceOf[MapTask])
-          Left(MapTasks(jobId, true, fn, mapTasks))
+          Left(MapTasks(jobId.toString, true, fn, mapTasks))
         case Reduce =>
           val reduceTasks = tasks.map(_.asInstanceOf[ReduceTask])
-          Right(ReduceTasks(jobId, false, fn, reduceTasks))
+          Right(ReduceTasks(jobId.toString, false, fn, reduceTasks))
       }
     }
   }

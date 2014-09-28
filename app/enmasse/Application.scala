@@ -1,5 +1,8 @@
 package enmasse
 
+import java.sql.BatchUpdateException
+import java.util.Date
+
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
 
@@ -28,7 +31,6 @@ object Application extends Controller {
       case s: JsSuccess[External.AddJob] =>
         val spec = s.value
         Store.download(spec.dataOrigin).map { data =>
-          import java.sql.BatchUpdateException
           try {
             Store.createJob(spec.name, spec.dataOrigin, data, spec.map, spec.reduce)
           } catch {
@@ -49,7 +51,7 @@ object Application extends Controller {
     val jobs = Store.getJobs
     val externalized = jobs.map {
       case Schema.Job(id: Long, name: String, dataOrigin: String, map: String, reduce: String, createdAt: Long, state: Int) =>
-        External.Job(id, name, dataOrigin, map, reduce, createdAt)
+        External.Job(id.toString, name, dataOrigin, map, reduce, createdAt)
     }
     Ok(Json.toJson(externalized))
   }
@@ -67,16 +69,21 @@ object Application extends Controller {
     request.body.validate[External.TaskSetResult] match {
       case s: JsSuccess[External.TaskSetResult] =>
         val spec = s.value
-        if (spec.mode) {
-          for (External.TaskGrpResult(preimageKey, emits) <- spec.output) {
-            val kvs = for (External.Emit(k, v) <- emits) yield (k, v)
-            Store.completeMapInput(spec.jobId, preimageKey, kvs)
+        val jobId = spec.jobId.toLong
+        try {
+          if (spec.mode) {
+            for (External.TaskGrpResult(preimageKey, emits) <- spec.output) {
+              val kvs = for (External.Emit(k, v) <- emits) yield (k, v)
+              Store.completeMapInput(jobId, preimageKey, kvs)
+            }
+          } else {
+            for (External.TaskGrpResult(preimageKey, emits) <- spec.output) {
+              val kvs = for (External.Emit(k, v) <- emits) yield (k, v)
+              Store.completeIntermediate(jobId, preimageKey, kvs)
+            }
           }
-        } else {
-          for (External.TaskGrpResult(preimageKey, emits) <- spec.output) {
-            val kvs = for (External.Emit(k, v) <- emits) yield (k, v)
-            Store.completeIntermediate(spec.jobId, preimageKey, kvs)
-          }
+        } catch {
+          case e: BatchUpdateException => e.getNextException.printStackTrace()
         }
         Ok
       case e: JsError =>
