@@ -108,11 +108,11 @@ object Store {
     }
   }
 
-  def completeIntermediate(id: Long, kvs: Iterable[(String, String)]) = {
+  def completeIntermediate(jobId: Long, intermediateKey: String, kvs: Iterable[(String, String)]) = {
     // outside the transaction block, generating randoms take a long time
     val augmented = kvs.map { case (k, v) => (Random.nextLong(), k, v) }
     DB.withTransaction { implicit session =>
-      val intermediateQuery = Table.Intermediate.q.filter(_.id === id)
+      val intermediateQuery = Table.Intermediate.q.filter(x => x.jobId === jobId && x.key === key)
       intermediateQuery.firstOption match {
         case None =>
           throw new AssertionError
