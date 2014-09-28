@@ -1,4 +1,5 @@
-JobTile = = Backbone.View.extend({
+JobTile = Backbone.View.extend({
+	className: 'sidebar-cell job',
 
 	events: {
 

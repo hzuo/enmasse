@@ -37,4 +37,20 @@ Job = Backbone.Model.extend({
 		}
 	}
 
+
+},{
+    
+    create : function(name, dataLoc, map, reduce){
+        $.ajax({
+        	method: "POST",
+        	url: "/jobs",
+        	dataType: "json",
+        	success: function(data){
+        		var j = new Job();
+        		j.set(data);
+        		jobs.add(j);
+        	}
+        });
+    }
+    
 });
