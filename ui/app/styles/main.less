@@ -17,6 +17,9 @@ html, body {
 	height: 74px;
 	right: 0px;
 	background-color: @blue;
+	background-image: url("/assets/images/enmasse_logo_line.png"), url("/assets/images/enmasse_logo_small.png");
+	background-repeat: repeat-x, no-repeat;
+	background-position: center center, center center;
 }
 
 #sidebar {
@@ -142,4 +145,17 @@ html, body {
 
 .status-title {
 	font-weight: bold;
+}
+
+#map-editor,
+#reduce-editor {
+	height: 300px;	
+}
+
+h1 {
+	font-family: "Oswald";
+	font-size: 28px;
+	margin: 0;
+	padding: 0;
+	font-weight: light;
 }

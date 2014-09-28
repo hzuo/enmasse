@@ -12,8 +12,7 @@ JobOverview = Backbone.View.extend({
 	},
 
 	render: function(){
-		this.$el.html("");
-		this.$el.append((new JobLabel()).render().el);
+		this.$el.html("<div id='sidebar-label'>jobs</div>");
 		_this = this;
 		this.collection.forEach(function(model){
 			var v = new JobTile({model:model});
