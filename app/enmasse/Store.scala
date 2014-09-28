@@ -27,6 +27,10 @@ object Store {
     }
   }
 
+  // TODO: once sent out, set send to false
+  // prioritize send true
+  // undone send falses will be done later
+
   def moreTasks(max: Int): List[Schema.Input] = DB.withTransaction { implicit session =>
 
     def random = SimpleFunction[Long]("random").apply(Seq.empty)
@@ -71,12 +75,40 @@ object Store {
 
   }
 
-  def completeMapInput(jobId: Long, id: Long, kvs: Iterable[(String, String)]) = DB.withTransaction { implicit session =>
-  	
+  def completeMapInput(id: Long, kvs: Iterable[(String, String)]) = {
+    // outside the transaction block, generating randoms take a long time
+    val augmented = kvs.map { case (k, v) => (Random.nextLong(), k, v) }
+    DB.withTransaction { implicit session =>
+      val mapInputQuery = Table.MapInput.q.filter(_.id === id)
+      mapInputQuery.firstOption match {
+        case None =>
+          throw new AssertionError
+        case Some(mapInput) =>
+          if (!mapInput.done) {
+            mapInputQuery.map(_.done).update(true)
+            val intermediates = augmented.map { case (id, k, v) => Schema.Input(id, k, v, mapInput.jobId, false) }
+            Table.Intermediate.q ++= intermediates
+          }
+      }
+    }
   }
 
-  def completeIntermediate(jobId: Long, id: Long, kvs: Iterable[(String, String)]) = DB.withTransaction { implicit session =>
-
+  def completeIntermediate(id: Long, kvs: Iterable[(String, String)]) = {
+    // outside the transaction block, generating randoms take a long time
+    val augmented = kvs.map { case (k, v) => (Random.nextLong(), k, v) }
+    DB.withTransaction { implicit session =>
+      val intermediateQuery = Table.Intermediate.q.filter(_.id === id)
+      intermediateQuery.firstOption match {
+        case None =>
+          throw new AssertionError
+        case Some(intermediate) =>
+          if (!intermediate.done) {
+            intermediateQuery.map(_.done).update(true)
+            val outputs = augmented.map { case (id, k, v) => Schema.Output(id, k, v, intermediate.jobId) }
+            Table.ReduceOuput.q ++= outputs
+          }
+      }
+    }
   }
 
 }
