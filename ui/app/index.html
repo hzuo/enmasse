@@ -3,22 +3,40 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+
+    <script type="text/html" id="job-cell">
+		<div class="job-id">#<%= id %></div>
+		<div class="job-title"><%= title %></div>
+    </script>
+    <script type="text/html" id="job-add">
+		<div class="job-add"> + </div>
+    </script>
+    <script type="text/html" id="job-detail">
+    	<div class="task-name">
+    		#<%= id %>: <%= name %>
+    	</div>
+		<div class="content-box">
+			<div class="content-header">status</div>
+			<div class="content-body">
+				<ul>
+					<li><span class="status-title">started:</span><%= createdAt %></li>
+					<li><span class="status-title">percentage done:</span><%= progress %></li>
+					<li><span class="status-title">current phase:</span><%= phase %></li>
+				</ul>
+			</div>
+		</div>
+		<div class="content-box">
+			<div class="content-header">results</div>
+			<div class="content-body">
+				download here
+			</div>
+		</div>
+    </script>
+
     <script type="text/javascript" src="scripts/enmasse-ui.js"></script>
     <link href='http://fonts.googleapis.com/css?family=Oswald:400,300' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
     <link rel="stylesheet" href="styles/enmasse-ui.css">
-    <script type="text/html" id="job-cell">
-		<div class="sidebar-cell job">
-			<div class="job-id">#<%= id %></div>
-			<div class="job-title"><%= title %></div>
-		</div>
-    </script>
-    <script type="text/html" id="job-add">
-		<div class="sidebar-cell">
-			<div class="job-add"> + </div>
-		</div>
-    </script>
-
 </head>
 <body>
 	<div id="sidebar">
