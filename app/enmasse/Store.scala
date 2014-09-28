@@ -22,10 +22,12 @@ object Store {
     val mapInputs = io.Source.fromString(content).getLines.zipWithIndex.map {
       case (v, k) => Schema.Record(k.toString, v, job.id)
     }.toIterable
+    val jobPulse = Schema.JobPulse(job.id, mapInputs.size, -1)
     DB.withTransaction { implicit session =>
       Table.Job.q += job
       Table.File.q += file
       Table.MapInput.q ++= mapInputs
+      Table.JobPulse.q += jobPulse
     }
   }
 
@@ -42,6 +44,8 @@ object Store {
         val mapInputs = Table.MapInput.q.filter(x => x.jobId === job.id).sortBy(_ => random).take(max).list()
         if (mapInputs.isEmpty) {
           Table.Job.q.filter(_.id === job.id).map(_.state).update(1)
+          val totalReduceTasks = Table.Intermediate.q.length.run
+          Table.JobPulse.q.filter(_.jobId === job.id).map(_.totalReduceTasks).update(totalReduceTasks)
         }
         mapInputs.map(x => MapTask(x.k, x.v))
       }
@@ -122,6 +126,19 @@ object Store {
 
   def getOutputs(jobId: Long) = DB.withSession { implicit session =>
     Table.ReduceOutput.q.filter(_.jobId === jobId).list()
+  }
+
+  def getProgress(jobId: Long): Double = DB.withSession { implicit session =>
+    val jobPulseOpt = Table.JobPulse.q.filter(_.jobId === jobId).firstOption
+    if (jobPulseOpt.isEmpty) {
+      throw new IllegalArgumentException
+    } else {
+      val x = jobPulseOpt.get
+      val denom = if (x.totalReduceTasks == -1) x.totalMapTasks else x.totalReduceTasks
+      val num = if (x.totalReduceTasks == -1) Table.MapInput.q.length.run else Table.Intermediate.q.length.run
+      val b = if (x.totalReduceTasks == -1) 0 else 0.5
+      (num.toDouble / (denom.toDouble * 2)) + b
+    }
   }
 
 }

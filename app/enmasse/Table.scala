@@ -75,4 +75,17 @@ object Table {
     override val q = TableQuery[Tbl]
   }
 
+  object JobPulse extends PostgresTable {
+    type Row = Schema.JobPulse
+    class Tbl(tag: Tag) extends Table[Row](tag, "reduce_output") {
+      def jobId = column[Long]("job_id")
+      def totalMapTasks = column[Long]("total_map_tasks")
+      def totalReduceTasks = column[Long]("total_reduce_tasks")
+      def * = (jobId, totalMapTasks, totalReduceTasks) <> (Schema.JobPulse.tupled, Schema.JobPulse.unapply)
+
+      def fk = foreignKey("job_pulse_fk_job", jobId, Job.q)(_.id)
+    }
+    override val q = TableQuery[Tbl]
+  }
+
 }

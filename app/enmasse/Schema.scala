@@ -6,4 +6,6 @@ object Schema {
   case class File(jobId: Long, content: String)
   case class Record(k: String, v: String, jobId: Long)
 
+  case class JobPulse(jobId: Long, totalMapTasks: Long, totalReduceTasks: Long)
+
 }
