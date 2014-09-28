@@ -20,9 +20,9 @@ function reportResults(result) {
 function executeTask(task) {
     var oc = function(){
         return {
-            emitted: [],
+            emits: [],
             collect: function (key, value) {
-                this.emitted.push({
+                this.emits.push({
                     k: key,
                     v: value
                 });
@@ -37,14 +37,14 @@ function executeTask(task) {
         out.push(
             {
                 id: task.input[i].id,
-                emitted: outputCollector.emitted
+                emits: outputCollector.emits
             }
         );
     }
 
     return {
-        phase: task.phase,
-        att_id: self.token,
+        mode: task.mode,
+        attractorId: self.token,
         output: out
     };
 }
