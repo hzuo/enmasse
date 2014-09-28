@@ -50,17 +50,12 @@ object Application extends Controller {
   }
 
   def moreTasks = Action {
-    val ((mode, fn), tasks) = Store.moreTasks(1000)
-    val modeFlag = mode match {
-      case Map => true
-      case Reduce => false
-    }
-    val externalizedTasks = tasks.map {
-      case Schema.Input(id, k, v, jobId, done) =>
-        External.Task(id, k, v)
-    }
-    val taskSet = External.TaskSet(modeFlag, fn, externalizedTasks)
-    Ok(Json.toJson(taskSet))
+    import External._
+    val jsonOpt = Store.moreTasks(1000).map(_ match {
+      case Left(mapTasks) => Json.toJson(mapTasks)
+      case Right(reduceTasks) => Json.toJson(reduceTasks)
+    })
+    Ok(Json.toJson(jsonOpt.toList))
   }
 
   def completeTasks = Action(parse.tolerantJson) { request =>
@@ -68,14 +63,14 @@ object Application extends Controller {
       case s: JsSuccess[External.TaskSetResult] =>
         val spec = s.value
         if (spec.mode) {
-          for (External.TaskGrpResult(id, emits) <- spec.output) {
+          for (External.TaskGrpResult(preimageKey, emits) <- spec.output) {
             val kvs = for (External.Emit(k, v) <- emits) yield (k, v)
-            Store.completeMapInput(id, kvs)
+            Store.completeMapInput(spec.jobId, preimageKey, kvs)
           }
         } else {
-          for (External.TaskGrpResult(id, emits) <- spec.output) {
+          for (External.TaskGrpResult(preimageKey, emits) <- spec.output) {
             val kvs = for (External.Emit(k, v) <- emits) yield (k, v)
-            Store.completeIntermediate(id, kvs)
+            Store.completeIntermediate(spec.jobId, preimageKey, kvs)
           }
         }
         Ok
