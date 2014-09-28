@@ -11,9 +11,7 @@ AppRouter = Backbone.Router.extend({
 			var v = new JobOverview({collection: jobs});
 			$("body").append(v.el);
 		}
-
 		$("#content").remove();
-
 	},
 
 	home: function(){

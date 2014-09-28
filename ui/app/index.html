@@ -6,7 +6,7 @@
 
     <script type="text/html" id="job-cell">
 		<div class="job-id">#<%= id %></div>
-		<div class="job-title"><%= title %></div>
+		<div class="job-title"><%= name %></div>
     </script>
     <script type="text/html" id="job-add">
 		<div class="job-add"> + </div>
@@ -16,12 +16,12 @@
     		#<%= id %>: <%= name %>
     	</div>
 		<div class="content-box">
-			<div class="content-header">status</div>
+			<div class="content-header">status: <%= status %></div>
 			<div class="content-body">
 				<ul>
-					<li><span class="status-title">started:</span><%= createdAt %></li>
-					<li><span class="status-title">percentage done:</span><%= progress %></li>
-					<li><span class="status-title">current phase:</span><%= phase %></li>
+					<li><span class="status-title">started: </span><%= createdAt %></li>
+					<li><span class="status-title">percentage done: </span><%= progress %></li>
+					<li><span class="status-title">current phase: </span><%= phase %></li>
 				</ul>
 			</div>
 		</div>
