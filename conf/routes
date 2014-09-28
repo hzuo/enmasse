@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET       /               enmasse.Application.index
+GET       /               controllers.Assets.at(path="/public", file="index.html")
 
 OPTIONS   /*path          enmasse.Application.preflight(path: String)
 
