@@ -6,7 +6,7 @@ function loadTask() {
     req.setRequestHeader('X-PINGOTHER', 'pingpong');
     req.setRequestHeader('Content-Type', 'application/json');
     req.send();
-    return req.response;
+    return JSON.parse(req.response);
 }
 
 function reportResults(result) {
@@ -14,7 +14,7 @@ function reportResults(result) {
     req.open('POST', self.urlBase + '/work', false);
     req.setRequestHeader('X-PINGOTHER', 'pingpong');
     req.setRequestHeader('Content-Type', 'application/json');
-    req.send(result);
+    req.send(JSON.stringify(result));
 }
 
 function executeTask(taskSet) {
@@ -29,7 +29,7 @@ function executeTask(taskSet) {
             }
         };
     };
-    var f = eval(taskSet.fn);
+    var f = eval('(' + taskSet.fn + ')');
     var out = [];
     for (var i = 0; i < taskSet.tasks.length; i++) {
         var outputCollector = oc();
@@ -53,6 +53,7 @@ function executeTask(taskSet) {
 function main() {
     while (true) {
         var option = loadTask();
+        console.log(option);
         if (option.length == 0) {
             setTimeout(self.main, 10000);
             break;

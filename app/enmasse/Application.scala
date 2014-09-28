@@ -63,7 +63,7 @@ object Application extends Controller {
     Ok(Json.toJson(jsonOpt.toList))
   }
 
-  def completeTasks = Action(parse.tolerantJson) { request =>
+  def completeTasks = Action(parse.tolerantJson(maxLength = Int.MaxValue)) { request =>
     request.body.validate[External.TaskSetResult] match {
       case s: JsSuccess[External.TaskSetResult] =>
         val spec = s.value
