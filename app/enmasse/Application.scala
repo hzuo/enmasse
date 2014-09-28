@@ -23,11 +23,9 @@ object Application extends Controller {
       "Access-Control-Allow-Headers" -> "Origin, X-PINGOTHER, Content-Type, Accept, Referer, User-Agent");
   }
 
-  import External._
-
   def addJob = Action.async(parse.tolerantJson) { request =>
-    request.body.validate[AddJob] match {
-      case s: JsSuccess[AddJob] =>
+    request.body.validate[External.AddJob] match {
+      case s: JsSuccess[External.AddJob] =>
         val spec = s.value
         Store.download(spec.dataOrigin).map { data =>
           Store.createJob(spec.name, spec.dataOrigin, data, spec.map, spec.reduce)
@@ -43,8 +41,12 @@ object Application extends Controller {
   }
 
   def getJobs = Action {
-	
-    Ok
+    val jobs = Store.getJobs
+    val externalized = jobs.map {
+      case Schema.Job(id: Long, name: String, dataOrigin: String, map: String, reduce: String, createdAt: Long, state: Int) =>
+        External.Job(id, name, dataOrigin, map, reduce, createdAt)
+    }
+    Ok(Json.toJson(externalized))
   }
 
 }

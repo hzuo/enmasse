@@ -113,9 +113,8 @@ object Store {
     }
   }
 
-  def exportJobs() = DB.withSession { implicit session =>
-    val xs = Table.Job.q.list()
-    ???
+  def getJobs(): List[Schema.Job] = DB.withSession { implicit session =>
+    Table.Job.q.list()
   }
 
 }
