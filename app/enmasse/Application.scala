@@ -49,4 +49,8 @@ object Application extends Controller {
     Ok(Json.toJson(externalized))
   }
 
+  def moreTasks = Action {
+    Ok
+  }
+
 }
