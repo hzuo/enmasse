@@ -11,9 +11,27 @@ object Table {
     type Row = Schema.Job
     class Tbl(tag: Tag) extends Table[Row](tag, "job") {
       def id = column[Long]("id")
-      def data = column[String]("data")
+      def name = column[String]("name")
+      def dataOrigin = column[String]("data_origin")
+      def map = column[String]("map")
+      def reduce = column[String]("reduce")
+      def createdAt = column[Long]("created_at")
       def state = column[Int]("state")
-      def * = (id, data, state) <> (Schema.Job.tupled, Schema.Job.unapply)
+      def * = (id, name, dataOrigin, map, reduce, createdAt, state) <> (Schema.Job.tupled, Schema.Job.unapply)
+
+      def pk = primaryKey("job_pk", id)
+    }
+    override val q = TableQuery[Tbl]
+  }
+
+  object File extends PostgresTable {
+    type Row = Schema.File
+    class Tbl(tag: Tag) extends Table[Row](tag, "file") {
+      def jobId = column[Long]("job_id")
+      def data = column[String]("data", O.DBType("TEXT"))
+      def * = (jobId, data) <> (Schema.File.tupled, Schema.File.unapply)
+
+      def fk = foreignKey("file_fk_job", jobId, Job.q)(_.id)
     }
     override val q = TableQuery[Tbl]
   }
@@ -27,6 +45,9 @@ object Table {
       def jobId = column[Long]("job_id")
       def done = column[Boolean]("done")
       def * = (id, k, v, jobId, done) <> (Schema.Input.tupled, Schema.Input.unapply)
+
+      def pk = primaryKey("map_input_pk", id)
+      def fk = foreignKey("map_input_fk_job", jobId, Job.q)(_.id)
     }
     override val q = TableQuery[Tbl]
   }
@@ -40,6 +61,9 @@ object Table {
       def jobId = column[Long]("job_id")
       def done = column[Boolean]("done")
       def * = (id, k, v, jobId, done) <> (Schema.Input.tupled, Schema.Input.unapply)
+
+      def pk = primaryKey("intermediate_pk", id)
+      def fk = foreignKey("intermediate_fk_job", jobId, Job.q)(_.id)
     }
     override val q = TableQuery[Tbl]
   }
@@ -52,6 +76,9 @@ object Table {
       def v = column[String]("v")
       def jobId = column[Long]("job_id")
       def * = (id, k, v, jobId) <> (Schema.Output.tupled, Schema.Output.unapply)
+
+      def pk = primaryKey("reduce_output_pk", id)
+      def fk = foreignKey("reduce_output_fk_job", jobId, Job.q)(_.id)
     }
     override val q = TableQuery[Tbl]
   }

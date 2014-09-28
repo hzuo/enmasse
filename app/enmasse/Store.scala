@@ -16,13 +16,15 @@ object Store {
     WS.url(url).get().map(_.body)
   }
 
-  def createJob(data: String) = {
-    val job = Schema.Job(Random.nextLong(), data, 0)
-    val mapInputs = io.Source.fromString(data).getLines.zipWithIndex.map {
+  def createJob(name: String, dataOrigin: String, content: String, map: String, reduce: String) = {
+    val job = Schema.Job(Random.nextLong(), name, dataOrigin, map, reduce, System.currentTimeMillis(), 0)
+    val file = Schema.File(job.id, content)
+    val mapInputs = io.Source.fromString(content).getLines.zipWithIndex.map {
       case (v, k) => Schema.Input(Random.nextLong(), k.toString, v, job.id, false)
     }.toIterable
     DB.withTransaction { implicit session =>
       Table.Job.q += job
+      Table.File.q += file
       Table.MapInput.q ++= mapInputs
     }
   }
@@ -111,4 +113,11 @@ object Store {
     }
   }
 
+  def exportJobs() = DB.withSession { implicit session =>
+    val xs = Table.Job.q.list()
+    ???
+  }
+
 }
+
+
