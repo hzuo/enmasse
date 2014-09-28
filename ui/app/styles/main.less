@@ -2,6 +2,7 @@
 @hoverdarkgrey: #525252;
 @lightgrey: #b3b3b3;
 @whitish: #f7f7f7;
+@blue: rgb(98, 165, 194);
 
 html, body {
 	margin: 0;
@@ -15,10 +16,10 @@ html, body {
 	left: 0px;
 	height: 74px;
 	right: 0px;
-	background-color: rgb(98, 165, 194);
-	background-image: url("/assets/images/enmasse_logo_small.png");
-	background-repeat: no-repeat;
-	background-position: center center;
+	background-color: @blue;
+	background-image: url("/assets/images/enmasse_logo_line.png"), url("/assets/images/enmasse_logo_small.png");
+	background-repeat: repeat-x, no-repeat;
+	background-position: center center, center center;
 }
 
 #sidebar {
@@ -108,6 +109,23 @@ html, body {
 			font-size: 20px;
 			padding: 15px 0;
 
+			input{
+				margin: 0px;
+				padding: 5px 0;
+				width: 100%;
+			}
+
+			.create-job-button{
+				margin: 15px 0px;
+				background-color: @blue;
+				color: #FFF;
+				border: 1px solid @darkgrey;
+			}
+
+			h3{
+				margin: 1em 0 0.25em 0;
+			}
+
 			ul {
 				margin: 0;
 				padding: 0;
@@ -131,7 +149,6 @@ html, body {
 
 #map-editor,
 #reduce-editor {
-	width: 500px;
 	height: 300px;	
 }
 
