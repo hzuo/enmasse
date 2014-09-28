@@ -1,6 +1,8 @@
 JobCreate = Backbone.View.extend({
 
-	className: "sidebar-cell",
+	id: "content",
+
+	template: _.template($("#job-create").html()),
 
 	events: {
 
@@ -10,11 +12,20 @@ JobCreate = Backbone.View.extend({
 		this.render();
 	},
 
-	render: function(){
-		this.$el.html($("#job-add").html());
-		return this.
+	postRender: function() {
+	    var mapEditor = ace.edit("map-editor");
+	    mapEditor.setTheme("ace/theme/monokai");
+	    mapEditor.getSession().setMode("ace/mode/javascript");
+
+	    var reduceEditor = ace.edit("reduce-editor");
+	    reduceEditor.setTheme("ace/theme/monokai");
+	    reduceEditor.getSession().setMode("ace/mode/javascript");
+	    return this;
 	},
 
-
+	render: function(){
+		this.$el.html(this.template());	    
+		return this;
+	},
 
 });

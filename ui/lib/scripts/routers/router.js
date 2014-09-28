@@ -16,15 +16,17 @@ AppRouter = Backbone.Router.extend({
 
 	},
 
-
 	home: function(){
 		this.setup();
+		$("body").append((new Home()).render().el);
 	},
 
 	create: function(){
 		this.setup();
 		var v = new JobCreate();
+		v.render();
 		$("body").append(v.el);
+		v.postRender();
 	},
 
 	job: function(id){

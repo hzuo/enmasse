@@ -32,53 +32,53 @@
 			</div>
 		</div>
     </script>
+    <script type="text/html" id="home-template">
+        <div class="content-box">
+            <div class="content-header">dashboard</div>
+            <div class="content-body">
+                Welcome to the enmasse dashboard!
+            </div>
+        </div>
+    </script>
+    <script type="text/html" id="job-create">
+        <div class="content-box">
+            <div class="content-header">create</div>
+            <div class="content-body">
+                <input type="text" placeholder="job name" />
+                <h3>map code</h3>
+                <div id="map-editor">function map(key, value, context) { &NewLine;&NewLine;}</div>
+                <h3>reduce code</h3>
+                <div id="reduce-editor">function reduce(key, value, context) { &NewLine;&NewLine;}</div>
+                <p>
+                <input type="text" placeholder="data location" />
+                <input type="button" value="create" />
+                </p>
+            </div>
+        </div>
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="scripts/bower.js"></script>
+    <script type="text/javascript" src="scripts/models/tracker.js"></script>
+    <script type="text/javascript" src="scripts/models/job.js"></script>
+    <script type="text/javascript" src="scripts/collections/jobs.js"></script>
+    <script type="text/javascript" src="scripts/views/job_tile.js"></script>
+    <script type="text/javascript" src="scripts/views/create_tile.js"></script>
+    <script type="text/javascript" src="scripts/views/job_overview.js"></script>
+    <script type="text/javascript" src="scripts/views/job_create.js"></script>
+    <script type="text/javascript" src="scripts/views/job_detail.js"></script>
+    <script type="text/javascript" src="scripts/views/home.js"></script>
+    <script type="text/javascript" src="scripts/routers/router.js"></script>
+    <script type="text/javascript" src="scripts/main.js"></script>
 
-    <script type="text/javascript" src="scripts/enmasse-ui.js"></script>
+
     <link href='http://fonts.googleapis.com/css?family=Oswald:400,300' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
     <link rel="stylesheet" href="styles/enmasse-ui.css">
 </head>
 <body>
-	<div id="sidebar">
-		<div id="header">
-			enmasse
-		</div>
-		<div id="sidebar-label">
-			jobs
-		</div>
-		<div class="sidebar-cell job">
-			<div class="job-id">#4930</div>
-			<div class="job-title">word count</div>
-		</div>
-		<div class="sidebar-cell job">
-			<div class="job-id">#4931</div>
-			<div class="job-title">weather job</div>
-		</div>
-		<div class="sidebar-cell job">
-			<div class="job-id">#102</div>
-			<div class="job-title">rosie stuff</div>
-		</div>
-		<div class="sidebar-cell">
-			<div class="job-add"> + </div>
-		</div>
-	</div>
-	<div id="content">
-		<div class="content-box">
-			<div class="content-header">status: <span class="status-complete">complete</span></div>
-			<div class="content-body">
-				<ul>
-					<li><span class="status-title">started:</span> Sept. 27, 9:56pm</li>
-					<li><span class="status-title">percentage done:</span> 57%</li>
-					<li><span class="status-title">estimated finish time:</span> Sept. 27, 9:58pm</li>
-				</ul>
-			</div>
-		</div>
-		<div class="content-box">
-			<div class="content-header">results</div>
-			<div class="content-body">
-				download here
-			</div>
-		</div>
+	<div id="header">
+		&nbsp;
 	</div>
 </body>
 </html>

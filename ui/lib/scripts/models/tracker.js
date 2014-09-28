@@ -2,15 +2,14 @@ ProgressTracker = Backbone.Model.extend({
 
 
 	initialize: function(){
-
-
+		this.updateProgress();
 	},
 
 
 	updateProgress: function(){
-		_this = this;
+		var _this = this;
 		this.fetch();
-		setTimeout(function(){_this.updateProgress();}, 10000);
+		setTimeout((function(){_this.updateProgress();}), 10000);
 	},
 
 	fetch: function(){
@@ -20,7 +19,7 @@ ProgressTracker = Backbone.Model.extend({
 			url: "/url",
 			method: "GET",
 			success: function(data){
-				diff = []
+				diff = [];
 
 
 				for(var i=0; i<diff.length; i++){
