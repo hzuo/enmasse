@@ -1,52 +1,58 @@
-urlBase = "//ec2-54-209-233-14.compute-1.amazonaws.com:9000";
+self.urlBase = "//ec2-54-209-233-14.compute-1.amazonaws.com:9000";
 
 function loadTask() {
     var req = new XMLHttpRequest();
-    req.open('GET', self.urlBase + '/worker.js', false);
+    req.open('GET', self.urlBase + '/work', false);
     req.setRequestHeader('X-PINGOTHER', 'pingpong');
-    req.setRequestHeader('Content-Type', 'application/javascript');
+    req.setRequestHeader('Content-Type', 'application/json');
     req.send();
     return req.results;
 }
 
 function reportResults(result) {
     var req = new XMLHttpRequest();
-    req.open('POST', self.urlBase + '/worker.js', false);
+    req.open('POST', self.urlBase + '/work', false);
     req.setRequestHeader('X-PINGOTHER', 'pingpong');
     req.setRequestHeader('Content-Type', 'application/json');
-    req.send(results);
+    req.send(result);
 }
 
 function executeTask(task) {
-    var outputCollector = {
-        results: {
-            uid: task.uid,
-            attractorToken: self.token,
-            type: task.type,
-            output: []
-        },
-        collect: function (key, value) {
-            this.results.output.push({
-                k: key,
-                v: value
-            });
-        }
+    var oc = function(){
+        return {
+            emits: [],
+            collect: function (key, value) {
+                this.emits.push({
+                    k: key,
+                    v: value
+                });
+            }
+        };
     };
-    var f = eval(task.code);
-    for (var i = 0; i < task.data.length; i++) {
-        f(data[i].key, data[i].value, outputCollector);
+    var f = eval(task.fn);
+    var out = [];
+    for (var i = 0; i < task.input.length; i++) {
+        var outputCollector = oc();
+        f(task.input[i].k, task.input[i].v, outputCollector);
+        out.push(
+            {
+                id: task.input[i].id,
+                emits: outputCollector.emits
+            }
+        );
     }
-    return outputCollector.results;
+
+    return {
+        mode: task.mode,
+        attractorId: self.token,
+        output: out
+    };
 }
 
 function main() {
-    for (var i = 0; i < 10; i++) {
-        console.log("greg");
+    while (true) {
+        reportResults(executeTask(loadTask()));
     }
-    //while (true) {
-        //reportResults(executeTask(loadTask()));
-        //console.log("greg");
-    //}
 }
 
 self.onmessage = function (e) {
