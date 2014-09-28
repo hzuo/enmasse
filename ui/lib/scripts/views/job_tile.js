@@ -17,11 +17,11 @@ JobTile = Backbone.View.extend({
 			id: this.model.get("id"),
 			name: this.model.get("name")
 		}));
+		this.updateProgress();
 		return this;
 	},
 
 	updateProgress: function(){
-		console.log("hi");
 		var progress = this.model.getProgress();
 		this.$el.css("background-image", function(){
 			var i = (100 - progress).toFixed(2);

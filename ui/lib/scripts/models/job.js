@@ -22,23 +22,33 @@ Job = Backbone.Model.extend({
 	},
 
 	getMode: function(){
-		if(this.tracker != null){
-			return this.tracker.getMode(this.get("id"));
+		if(tracker != null){
+			return tracker.getMode(this.get("id"));
 		}else{
 			return 0;
 		}
 	},
 
 	getProgress: function(){
-		if (this.tracker != null) {
-			var progress = this.tracker.getProgress(this.get("id"));
+		if (tracker != null) {
+			var progress = tracker.getProgress(this.get("id"));
 			return progress;
 		} else {
-			return Math.random() * 100;
+			return 0;
 		}
+	},
+
+	download: function(){
+		var hiddenIFrameID = 'hiddenDownloader',
+        iframe = document.getElementById(hiddenIFrameID);
+	    if (iframe === null) {
+	        iframe = document.createElement('iframe');
+	        iframe.id = hiddenIFrameID;
+	        iframe.style.display = 'none';
+	        document.body.appendChild(iframe);
+	    }
+	    iframe.src = "/export?id=" + this.get('id');
 	}
-
-
 },{
     
     create : function(name, dataLoc, map, reduce){

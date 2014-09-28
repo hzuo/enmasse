@@ -5,11 +5,12 @@ JobDetail = Backbone.View.extend({
 	template: _.template($("#job-detail").html()),
 
 	events: {
-		"change:progress": "render",
-		"change:mode": "render"
+		"click .detail" : "download"
 	},
 
 	initialize: function(){
+		this.model.bind("change:progress", this.render, this);
+		this.model.bind("change:mode", this.render, this);
 		this.render();
 	},
 
@@ -25,11 +26,15 @@ JobDetail = Backbone.View.extend({
 		}
 		var data = $.extend(this.model.toJSON(), {
 			status: status,
-			phase: _this.model.getMode(),
+			phase: _this.model.getMode() ? "map" : "reduce",
 			progress: progress
 		});
 		this.$el.append(this.template(data));
 		return this;
 	},
+
+	download: function(){
+		this.model.download();
+	}
 	
 });
