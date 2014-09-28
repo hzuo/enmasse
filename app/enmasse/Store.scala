@@ -33,52 +33,60 @@ object Store {
   // prioritize send true
   // undone send falses will be done later
 
-  def moreTasks(max: Int): ((Mode, String), List[Schema.Input]) = DB.withTransaction { implicit session =>
+  def moreTasks(max: Int): Tasks = DB.withTransaction { implicit session =>
 
     def random = SimpleFunction[Long]("random").apply(Seq.empty)
 
-    def fromMapInputs(job: Schema.Job): (Mode, List[Schema.Input]) = {
+    def fromMapInputs(job: Schema.Job): Iterable[Task] = {
       val mapInputs = Table.MapInput.q.filter(x => x.jobId === job.id && !x.done).sortBy(_ => random).take(max).list()
       if (mapInputs.isEmpty) {
         Table.Job.q.filter(_.id === job.id).map(_.state).update(1)
-        (Reduce, fromIntermediates(job))
-      } else {
-        (Map, mapInputs)
       }
+      mapInputs.map(x => MapTask(x.k, x.v))
     }
 
-    def fromIntermediates(job: Schema.Job) = {
-      val intermediates = Table.Intermediate.q.filter(x => x.jobId === job.id && !x.done).sortBy(_ => random).take(max).list()
+    def fromIntermediates(job: Schema.Job): Iterable[Task] = {
+      val howMany = Math.max(max / 10, 1)
+      val intermediates: List[(String, Schema.Input)] = {
+        Table.Intermediate.q
+          .filter(x => x.jobId === job.id && !x.done).sortBy(_ => random).take(howMany).map(_.k)
+          .innerJoin(Table.Intermediate.q).on(_ === _.k)
+          .list()
+      }
       if (intermediates.isEmpty) {
         Table.Job.q.filter(_.id === job.id).map(_.state).update(2)
       }
-      intermediates
+      val grouped = intermediates.groupBy(_._1).mapValues(_.map(_._2))
+      grouped.map(x => ReduceTask(x._1, x._2.map(_.v)))
     }
 
-    var ret: Option[List[Schema.Input]] = Some(Nil)
+    var ret: Option[Iterable[Task]] = Some(Nil)
     var modeAndFn: (Mode, String) = null
     while (ret.isDefined && ret.get.isEmpty) {
-      val jobOpt = Table.Job.q.filter(_.state =!= 2).sortBy(_ => random).firstOption()
+      val jobOpt = Table.Job.q.filter(_.state =!= 2).sortBy(_ => random).take(1).firstOption()
       jobOpt match {
         case None =>
           ret = None
         case Some(job) =>
           job.state match {
             case 0 =>
-              val (mode0, ret0) = fromMapInputs(job)
-              modeAndFn = mode0 match {
-                case Map => (Map, job.map)
-                case Reduce => (Reduce, job.reduce)
+              val tasks = fromMapInputs(job)
+              if (!tasks.isEmpty) {
+                ret = Some(tasks)
+                modeAndFn = (Map, job.map)
+              } else {
+                ret = Some(fromIntermediates(job))
+                modeAndFn = (Reduce, job.reduce)
               }
-              ret = Some(ret0)
             case 1 =>
-              modeAndFn = (Reduce, job.reduce)
               ret = Some(fromIntermediates(job))
+              modeAndFn = (Reduce, job.reduce)
           }
       }
     }
     assert(modeAndFn != null)
-    (modeAndFn, ret.toList.flatten)
+    val (mode, fn) = modeAndFn
+    Tasks(mode, fn, ret.toIterable.flatten)
 
   }
 
