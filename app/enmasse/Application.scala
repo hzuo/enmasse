@@ -28,7 +28,12 @@ object Application extends Controller {
       case s: JsSuccess[External.AddJob] =>
         val spec = s.value
         Store.download(spec.dataOrigin).map { data =>
-          Store.createJob(spec.name, spec.dataOrigin, data, spec.map, spec.reduce)
+          import java.sql.BatchUpdateException
+          try {
+            Store.createJob(spec.name, spec.dataOrigin, data, spec.map, spec.reduce)
+          } catch {
+            case e: BatchUpdateException => e.getNextException.printStackTrace()
+          }
           Ok
         }
       case e: JsError =>

@@ -1,4 +1,4 @@
-self.urlBase = "//ec2-54-209-233-14.compute-1.amazonaws.com:9000";
+self.urlBase = "http://ec2-54-209-233-14.compute-1.amazonaws.com:9000";
 
 function loadTask() {
     var req = new XMLHttpRequest();
@@ -6,7 +6,7 @@ function loadTask() {
     req.setRequestHeader('X-PINGOTHER', 'pingpong');
     req.setRequestHeader('Content-Type', 'application/json');
     req.send();
-    return req.results;
+    return req.response;
 }
 
 function reportResults(result) {
