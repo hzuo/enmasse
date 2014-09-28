@@ -7,6 +7,8 @@ import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
 
 import play.api._
+import play.api.Play.current
+import play.api.cache.Cache
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc._
@@ -91,6 +93,14 @@ object Application extends Controller {
         Logger.error(Json.stringify(js))
         BadRequest(js)
     }
+  }
+
+  def export(jobId: String) = Action { request =>
+    val outputs = Store.getOutputs(jobId.toLong)
+    val ret: String = Cache.getOrElse[String]("download:" + jobId) {
+      outputs.map { case Schema.Record(k, v, jobId) => k + "\t" + v }.mkString("\n")
+    }
+    Ok(ret)
   }
 
 }

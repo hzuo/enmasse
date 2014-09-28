@@ -120,4 +120,8 @@ object Store {
     Table.Job.q.list()
   }
 
+  def getOutputs(jobId: Long) = DB.withSession { implicit session =>
+    Table.ReduceOutput.q.filter(_.jobId === jobId).list()
+  }
+
 }
