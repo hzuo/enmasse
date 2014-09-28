@@ -17,11 +17,11 @@ function reportResults(result) {
     req.send(result);
 }
 
-function executeTask(task) {
-    var oc = function(){
+function executeTask(taskSet) {
+    var oc = function () {
         return {
             emits: [],
-            collect: function (key, value) {
+            emit: function (key, value) {
                 this.emits.push({
                     k: key,
                     v: value
@@ -29,29 +29,37 @@ function executeTask(task) {
             }
         };
     };
-    var f = eval(task.fn);
+    var f = eval(taskSet.fn);
     var out = [];
-    for (var i = 0; i < task.input.length; i++) {
+    for (var i = 0; i < taskSet.tasks.length; i++) {
         var outputCollector = oc();
-        f(task.input[i].k, task.input[i].v, outputCollector);
+        f(taskSet.tasks[i].k, taskSet.tasks[i].v, outputCollector);
         out.push(
             {
-                id: task.input[i].id,
+                preimageKey: taskSet.tasks[i].key,
                 emits: outputCollector.emits
             }
         );
     }
 
     return {
-        mode: task.mode,
         attractorId: self.token,
+        jobId: taskSet.jobId,
+        mode: taskSet.mode,
         output: out
     };
 }
 
 function main() {
     while (true) {
-        reportResults(executeTask(loadTask()));
+        var option = loadTask();
+        if (option.length == 0) {
+            setTimeout(self.main, 10000);
+            break;
+        }
+        for (var i = 0; i < option.length; i++) {
+            reportResults(executeTask(option[i]));
+        }
     }
 }
 

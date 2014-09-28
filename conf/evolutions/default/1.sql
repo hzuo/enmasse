@@ -8,13 +8,13 @@ create table "file" ("job_id" BIGINT NOT NULL,"data" TEXT NOT NULL);
 
 alter table "file" add constraint "file_fk_job" foreign key("job_id") references "job"("id") on update NO ACTION on delete NO ACTION;
 
-create table "map_input" ("id" BIGINT NOT NULL,"k" VARCHAR(254) NOT NULL,"v" VARCHAR(254) NOT NULL,"job_id" BIGINT NOT NULL,"done" BOOLEAN NOT NULL);
+create table "map_input" ("id" BIGINT NOT NULL,"k" VARCHAR(254) NOT NULL,"v" TEXT NOT NULL,"job_id" BIGINT NOT NULL,"done" BOOLEAN NOT NULL);
 
 alter table "map_input" add constraint "map_input_pk" primary key("id");
 
 alter table "map_input" add constraint "map_input_fk_job" foreign key("job_id") references "job"("id") on update NO ACTION on delete NO ACTION;
 
-create table "intermediate" ("id" BIGINT NOT NULL,"k" VARCHAR(254) NOT NULL,"v" VARCHAR(254) NOT NULL,"job_id" BIGINT NOT NULL,"done" BOOLEAN NOT NULL);
+create table "intermediate" ("id" BIGINT NOT NULL,"k" VARCHAR(254) NOT NULL,"v" TEXT NOT NULL,"job_id" BIGINT NOT NULL,"done" BOOLEAN NOT NULL);
 
 alter table "intermediate" add constraint "intermediate_pk" primary key("id");
 
