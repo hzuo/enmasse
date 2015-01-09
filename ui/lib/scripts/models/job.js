@@ -17,7 +17,7 @@ Job = Backbone.Model.extend({
 	},
 
 	setProgressTracker: function(tracker){
-		_this = this;
+		var _this = this;
 		this.tracker = tracker;
 	},
 
@@ -61,6 +61,8 @@ Job = Backbone.Model.extend({
         		var j = new Job();
         		j.set(data);
         		jobs.add(j);
+                console.log(j);
+                router.navigate("detail/" + this.model.get("id"), {trigger:true});
         	}
         });
     }

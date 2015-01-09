@@ -14,7 +14,7 @@ JobTile = Backbone.View.extend({
 
 	render: function(){
 		this.$el.html(this.template({
-			id: this.model.get("id"),
+			id: Math.floor(Math.abs(Number(this.model.get("id")) / 10000) % 10000),
 			name: this.model.get("name")
 		}));
 		this.updateProgress();

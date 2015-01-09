@@ -5,7 +5,7 @@ JobDetail = Backbone.View.extend({
 	template: _.template($("#job-detail").html()),
 
 	events: {
-		"click .detail" : "download"
+		"click .download" : "download"
 	},
 
 	initialize: function(){
@@ -27,7 +27,8 @@ JobDetail = Backbone.View.extend({
 		var data = $.extend(this.model.toJSON(), {
 			status: status,
 			phase: _this.model.getMode() ? "map" : "reduce",
-			progress: progress
+			progress: progress,
+            id: Math.floor(Math.abs(Number(this.model.get("id")) / 10000) % 10000)
 		});
 		this.$el.append(this.template(data));
 		return this;

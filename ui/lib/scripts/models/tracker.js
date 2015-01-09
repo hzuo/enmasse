@@ -13,20 +13,23 @@ ProgressTracker = Backbone.Model.extend({
 	},
 
 	fetch: function(){
-		_this = this;
-		for(var i = 0; i<this.ids.length; i++){
-			$.ajax({
-				url: "/progress?id=" + ids[i],
-				method: "GET",
-				success: function(num){
-					_this.a[_this.ids[i]] = Math.ceil(Number(num) * 100);
-					this.trigger("change:progress:" + this.ids[i]);
-					if(_this.a[_this.ids[i]] == 50){
-						_this.trigger("change:mode:" + this.ids[i]);
-					}
-				}
-			});
-		}
+		var _this = this;
+        this.ids.forEach(function(id){
+            $.ajax({
+                url: "/progress?id=" + id,
+                method: "GET",
+                success: function(num){
+                    var old = _this.a[id];
+                    _this.a[id] = Math.ceil(Number(num) * 100);
+                    if(old != _this.a[id]) {
+                        _this.trigger("change:progress:" + id);
+                    }
+                    if(_this.a[id] == 50){
+                        _this.trigger("change:mode:" + id);
+                    }
+                }
+            });
+        });
 	},
 
 	a: {},
@@ -40,7 +43,7 @@ ProgressTracker = Backbone.Model.extend({
 	},
 
 	getMode: function(id){
-		return this.getProgess() < 50;	
+		return this.getProgress(id) < 50;
 	}
 
 });

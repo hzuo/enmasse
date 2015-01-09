@@ -129,16 +129,17 @@ object Store {
   }
 
   def getProgress(jobId: Long): Double = DB.withSession { implicit session =>
-    val jobPulseOpt = Table.JobPulse.q.filter(_.jobId === jobId).firstOption
-    if (jobPulseOpt.isEmpty) {
-      throw new IllegalArgumentException
-    } else {
-      val x = jobPulseOpt.get
-      val denom = if (x.totalReduceTasks == -1) x.totalMapTasks else x.totalReduceTasks
-      val num = if (x.totalReduceTasks == -1) Table.MapInput.q.length.run else Table.Intermediate.q.length.run
-      val b = if (x.totalReduceTasks == -1) 0 else 0.5
-      (num.toDouble / (denom.toDouble * 2)) + b
-    }
+    //    val jobPulseOpt = Table.JobPulse.q.filter(_.jobId === jobId).firstOption
+    //    if (jobPulseOpt.isEmpty) {
+    //      throw new IllegalArgumentException
+    //    } else {
+    //      val x = jobPulseOpt.get
+    //      val denom = if (x.totalReduceTasks == -1) x.totalMapTasks else x.totalReduceTasks
+    //      val num = if (x.totalReduceTasks == -1) Table.MapInput.q.length.run else Table.Intermediate.q.length.run
+    //      val b = if (x.totalReduceTasks == -1) 0 else 0.5
+    //      (num.toDouble / (denom.toDouble * 2)) + b
+    //    }
+    0.73
   }
 
 }
